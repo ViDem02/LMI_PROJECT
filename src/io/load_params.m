@@ -4,6 +4,8 @@ root = fileparts(fileparts(fileparts(mfilename('fullpath')))); % src/io -> root
 configDir = fullfile(root, 'config');
 
 cfg.plant  = read_json(fullfile(configDir, 'plant_params.json'));
+cfg.eq  = read_json(fullfile(configDir, 'equilibrium.json'));
+cfg.design  = read_json(fullfile(configDir, 'design.json'));
 
 cfg.meta.root      = root;
 cfg.meta.configDir = configDir;
