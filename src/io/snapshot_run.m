@@ -8,7 +8,7 @@ outdir = fullfile(cfg.meta.root, 'results', [stamp tag]);
 if ~exist(outdir, 'dir'), mkdir(outdir); end
 
 % Copy the exact configuration used.
-jsons = {'plant_params.json'};
+jsons = {'plant_params.json', 'design.json', 'equilibrium.json', 'observer_gains.json'};
 for i = 1:numel(jsons)
     src = fullfile(cfg.meta.configDir, jsons{i});
     if isfile(src), copyfile(src, outdir); end

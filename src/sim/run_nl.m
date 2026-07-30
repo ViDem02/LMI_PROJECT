@@ -6,7 +6,7 @@ p = cfg.plant;
 eq = cfg.eq;
 
 xeq = [eq.h1; eq.h2];
-x0 = xeq(:) + cfg.design.x0(:);
+x0 = xeq(:) + cfg.design.dx0(:);
 tspan = 0:dt:t_sim;
 
 [t, x] = ode45(@(t,x) f_TankNLDynamics(t, x, uFun(t,x), p), tspan, x0, ...

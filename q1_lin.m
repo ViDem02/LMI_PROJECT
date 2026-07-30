@@ -1,45 +1,33 @@
-
 %% Init
-clear all
 
+clearvars;
 startup_project;
 cfg = load_params;
 
 %% Linearization
 
-p = cfg.plant; 
+p = cfg.plant;
 eq = cfg.eq;
 
-xeq = [eq.h1; eq.h2];
-ueq = [eq.u1; eq.u2; eq.u3];
+[xeq, ueq] = find_equilibrium(cfg);
+[A, B, C, D, E, F] = f_TankStateSpace(xeq, ueq, p);
 
-phi1 = sqrt(2*p.g*h1);       phi2 = sqrt(2*p.g*h2);
-beta1 = p.g / phi1;          beta2 = p.g / phi2;   % d(phi)/dh at the eq. point
+disp('xeq ='), disp(xeq), disp('ueq ='), disp(ueq)
 
-% -- A = df/dx  (lower-triangular: tank 1 does not depend on h2)
-A = [ -(u2*p.a2)*beta1/p.A1 ,            0                ;
-       (u2*p.a2)*beta1/p.A2 ,  -(u3*p.a3)*beta2/p.A2      ];
+fprintf("\n\nMatrices\n")
 
-% -- B = df/du
-B = [  p.q0/p.A1 ,  -p.a2*phi1/p.A1 ,        0            ;
-          0      ,   p.a2*phi1/p.A2 ,  -p.a3*phi2/p.A2     ];
-
-% -- E = df/dw ,  w = [alpha1; alpha2]
-E = [ -phi1/p.A1 ,      0       ;
-          0      ,  -phi2/p.A2   ];
-
-% -- Performance output z = [h1; h2] = x
-C = eye(2);
-D = zeros(2, 3);
-F = zeros(2, 2);
+disp('A ='), disp(A), disp('B ='), disp(B), disp('E ='), disp(E)
+disp('C ='), disp(C), disp('D ='), disp(D), disp('F ='), disp(F)
 
 
 lambda = eig(A);
-fprintf('open-loop eigenvalues : %.3e , %.3e\n', lambda(1), lambda(2));
+fprintf("\n\nEWs analysis\n")
+fprintf('\topen-loop eigenvalues : %.10e , %.10e\n', lambda(1), lambda(2));
 % both of them have negative real parts. 
 
-fprintf('slowest time constant : %.0f s\n', 1/min(abs(real(lambda))));
+fprintf('\tslowest time constant : %.0f s\n', 1/min(abs(real(lambda))));
 
+% This means that the system is stable but quite slow. 
 
 %% Simulation
 
@@ -55,15 +43,15 @@ t_sim = 2500;
 dt    = 0.5;
 
 
-%initial height close to eq VS initial height far from eq
-cases = { [-0.02; -0.02], 'close (h^{init} = 0.18 m)';
-[-0.18; -0.18], 'far (h^{init} = 0.02 m)' };
+% small vs large dev coordinates
+cases = { [-0.02; -0.02], '\delta x small = -0.02m';
+          [-0.18; -0.18], '\delta x large = -0.18m' };
 
 res = struct('nl', {}, 'lin', {}, 'x0', {}, 'label', {});
 for i = 1:size(cases, 1)
     dx0 = cases{i, 1};
     sim_cfg = cfg;
-    sim_cfg.design.x0 = dx0;    
+    sim_cfg.design.dx0 = dx0;
 
     % same scenario on each model, same time grid
     rnl  = run_nl(uFun, sim_cfg, t_sim, dt);    % nonlinear
@@ -77,12 +65,12 @@ end
 
 
 
-%% Comparison figure
+%% Comparison figure between Linear and Non Linear
 
 cNL  = [0      0.4470 0.7410];   % nonlinear (blue)
 cLIN = [0.8500 0.3250 0.0980];   % linear    (red)
 figCmp = figure(1); clf(figCmp); figCmp.Name = 'Q1: linear vs nonlinear';
-tiledlayout(2, 2, 'TileSpacing', 'compact');
+tiledlayout(1, 4, 'TileSpacing', 'compact');
 for i = 1:numel(res)
     for k = 1:2   % tank index
         nexttile((i-1)*2 + k); hold on; grid on; grid minor
@@ -94,9 +82,47 @@ for i = 1:numel(res)
             xlabel('time [s]'); 
         end
         ylabel(sprintf('h_%d [m]', k));
-        title(sprintf('h_%d - %s', k, res(i).label));
+        title(sprintf('h_%d vs %s', k, res(i).label));
         if i == 1 && k == 1
             legend('nonlinear', 'linear', 'equilibrium', 'Location', 'best');
         end
     end
 end
+
+%% Model mismatch - small on LEFT (blue), large on RIGHT (red)
+
+figErr = figure(2); clf(figErr); figErr.Name = 'Q1: linearization error';
+cL = [0 .447 .741];    % blue - small
+cR = [.85 .325 .098];  % red  - large
+
+
+errS = vecnorm(res(1).nl.x - res(1).lin.x, 2, 2);
+errL = vecnorm(res(2).nl.x - res(2).lin.x, 2, 2);
+
+yyaxis left
+hS = plot(res(1).nl.t, errS, '-', 'LineWidth', 1.6, ...
+          'DisplayName', res(1).label);
+hS.Color = cL;
+ax = gca; ax.YColor = cL;
+ylabel('|x_{nl}-x_{lin}| [m] - small', 'Color', cL);
+grid on; grid minor
+
+yyaxis right
+hL = plot(res(2).nl.t, errL, '-', 'LineWidth', 1.6, ...
+          'DisplayName', res(2).label);
+hL.Color = cR; hL.LineStyle = '-';
+ax.YColor = cR;
+ylabel('|x_{nl}-x_{lin}| [m] - large', 'Color', cR);
+
+%ax.YAxis(2).Exponent = -2;        % force ×10^{-2} on the RIGHT axis
+
+xlabel('time [s]');
+title('Lin error');
+legend('Location', 'best');
+
+%% Save everything
+
+
+style_fig(figCmp, 'Size',[30 8], 'MaxXTicks',5, 'MaxYTicks',5, 'FontSize',11);
+style_fig(figErr, 'Size',[8 8], 'MaxXTicks',5, 'MaxYTicks',5);
+snapshot_run(cfg, struct('lin', lin), [figCmp, figErr], 'q1');

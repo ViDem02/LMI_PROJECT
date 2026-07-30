@@ -1,6 +1,7 @@
-% Script used to find the best u2 to allow the best margin for u1 and u3.
+% Script used to find the best u2 to allow the best margin 
+% of maneuver for u1 and u3.
 
-clear all
+clearvars;
 
 startup_project();
 cfg = load_params;
@@ -55,4 +56,8 @@ ylabel('Margin');
 legend('u_1','u_2','u_3','Location','best');
 title('Control margins vs. u_2');
 
+%% Save everything
+
+
+style_fig(figUs, 'Size',[8 8], 'MaxXTicks',6, 'MaxYTicks',6)
 snapshot_run(cfg, struct('table', T), figUs, 'find_u2');

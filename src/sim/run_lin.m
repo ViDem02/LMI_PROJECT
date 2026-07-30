@@ -5,7 +5,7 @@ function res = run_lin(lin, cfg, t_sim, dt)
 A = lin.A; xeq = lin.xeq(:);  ueq = lin.ueq(:);
 
 tspan = 0:dt:t_sim;
-dx0   = cfg.design.x0(:);
+dx0   = cfg.design.dx0(:);
 
 
 [t, dx] = ode45(@(t,dx) A*dx, tspan, dx0, ...
