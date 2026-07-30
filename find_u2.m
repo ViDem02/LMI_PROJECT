@@ -1,3 +1,7 @@
+% Script used to find the best u2 to allow the best margin for u1 and u3.
+
+clear all
+
 startup_project();
 cfg = load_params;
 
@@ -25,7 +29,10 @@ margin = min(lowMargin, upperMargin);
 [worst, iworst] = min(margin);
 feasible = all(ubar >= 0) && all(ubar <= 1);
 
-fprintf("%10.4f  %10.4f  %10.4f \n \n", margin(1), margin(2), margin(3))
+
+fprintf('ueq = [%.4f %.4f %.4f]\n', ubar);
+fprintf("margins: %10.4f  %10.4f  %10.4f \n\n", margin(1), margin(2), margin(3))
+
 array(i,:) = margin';
 i = i + 1;
 % how much space will each control have
@@ -48,4 +55,4 @@ ylabel('Margin');
 legend('u_1','u_2','u_3','Location','best');
 title('Control margins vs. u_2');
 
-snapshot_run(cfg, struct('table', table), figUs, 'find_u2');
+snapshot_run(cfg, struct('table', T), figUs, 'find_u2');
