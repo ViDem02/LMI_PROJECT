@@ -181,7 +181,6 @@ for s = 1:3
     xlim(xspan{s});                        % shared x-axis: set once per subplot
     if s == 3                              % custom y-ranges only on the third
         yyaxis left;  ylim([0.63 0.9]);   % u1 axis
-        yyaxis right; %ylim([0.25 0.40]);   % u2, u3 axis
     end
 end
 xlabel('time [s]');

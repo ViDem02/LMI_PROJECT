@@ -1,5 +1,6 @@
-%% decompose_h2.m - which channel drives the linear/nonlinear h2 gap?
-% Run this AFTER q1_lin.m so `res`, `xeq`, `ueq`, `cfg` are in scope,
+
+% Important!
+% Run this AFTER q1_lin.m so `res`, `xeq`, `ueq`, `cfg` are in scope
 
 startup_project;
 cfg = load_params;

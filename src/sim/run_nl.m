@@ -12,6 +12,7 @@ tspan = 0:dt:t_sim;
 [t, x] = ode45(@(t,x) f_TankNLDynamics(t, x, uFun(t,x), p), tspan, x0, ...
                odeset('RelTol',1e-6,'AbsTol',1e-8));
 
+% needed to have data in an easy to use shape
 N = numel(t);
 m = numel(uFun(t(1), x(1,:)'));
 u = zeros(N, m);

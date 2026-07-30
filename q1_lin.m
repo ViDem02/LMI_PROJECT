@@ -114,8 +114,6 @@ hL.Color = cR; hL.LineStyle = '-';
 ax.YColor = cR;
 ylabel('|x_{nl}-x_{lin}| [m] - large', 'Color', cR);
 
-%ax.YAxis(2).Exponent = -2;        % force ×10^{-2} on the RIGHT axis
-
 xlabel('time [s]');
 title('Lin error');
 legend('Location', 'best');

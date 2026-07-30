@@ -14,29 +14,27 @@ array = zeros( width(space),3 );
 
 i = 1;
 for u2 = space
-
-% configuration of the system
-p = cfg.plant;
-h1 = 0.2; h2 = 0.2;
-phi1 = sqrt(2*p.g*h1);  phi2 = sqrt(2*p.g*h2);
-u1   = u2 * p.a2*phi1 / p.q0;         % from h1dot = 0
-u3   = u2 * p.a2*phi1 / (p.a3*phi2);  % from h2dot = 0
-ubar = [u1; u2; u3];
-
-% margins eval - considering that ctrl u will be capped between 0 and 1
-lowMargin = ubar;
-upperMargin = 1 - ubar; 
-margin = min(lowMargin, upperMargin); 
-[worst, iworst] = min(margin);
-feasible = all(ubar >= 0) && all(ubar <= 1);
-
-
-fprintf('ueq = [%.4f %.4f %.4f]\n', ubar);
-fprintf("margins: %10.4f  %10.4f  %10.4f \n\n", margin(1), margin(2), margin(3))
-
-array(i,:) = margin';
-i = i + 1;
-% how much space will each control have
+    % configuration of the system
+    p = cfg.plant;
+    h1 = 0.2; h2 = 0.2;
+    phi1 = sqrt(2*p.g*h1);  phi2 = sqrt(2*p.g*h2);
+    u1   = u2 * p.a2*phi1 / p.q0;         % from h1dot = 0
+    u3   = u2 * p.a2*phi1 / (p.a3*phi2);  % from h2dot = 0
+    ubar = [u1; u2; u3];
+    
+    % margins eval - considering that ctrl u will be capped between 0 and 1
+    lowMargin = ubar;
+    upperMargin = 1 - ubar; 
+    margin = min(lowMargin, upperMargin); 
+    [worst, iworst] = min(margin);
+    feasible = all(ubar >= 0) && all(ubar <= 1);
+    
+    
+    fprintf('ueq = [%.4f %.4f %.4f]\n', ubar);
+    fprintf("margins: %10.4f  %10.4f  %10.4f \n\n", margin(1), margin(2), margin(3))
+    
+    array(i,:) = margin';
+    i = i + 1;
 end
 
 

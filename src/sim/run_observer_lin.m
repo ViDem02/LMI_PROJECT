@@ -1,5 +1,6 @@
 function res = run_observer_lin(lin, K, L, xhat0, cfg, t_sim, dt)
 % Integrate the coupled true+observer dynamics on the linear plant.
+% Please see file run_observer for more insightful comments.
 
 A = lin.A;  B = lin.B;  C = lin.C;
 xeq = lin.xeq(:);  ueq = lin.ueq(:);
@@ -23,11 +24,11 @@ res.r    = (x - xeq') * C' - (xhat - xeq') * C';   % output residual y - yhat
 end
 
 function dz = obs_rhs_lin(z, A, B, C, K, L, xeq, ueq)
-x    = z(1:2);   xhat = z(3:4);
-u    = ueq + K*(xhat - xeq);         % controller uses the estimate
-dx   = A*(x - xeq) + B*(u - ueq);    % LINEAR plant
-dxh  = xhat - xeq;
-r    = C*(x - xeq) - C*dxh;          % innovation
-dxhat= A*dxh + B*(u - ueq) + L*r;
-dz   = [dx; dxhat];
+    x    = z(1:2);   xhat = z(3:4);
+    u    = ueq + K*(xhat - xeq);         % controller uses the estimate
+    dx   = A*(x - xeq) + B*(u - ueq);    % LINEAR plant
+    dxh  = xhat - xeq;
+    r    = C*(x - xeq) - C*dxh;          % innovation
+    dxhat= A*dxh + B*(u - ueq) + L*r;
+    dz   = [dx; dxhat];
 end

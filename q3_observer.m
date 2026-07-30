@@ -178,7 +178,7 @@ end
 
 %% Design K_d 
 m = size(B,2);
-alpha_d =  0.0095;  %cfg.design.alpha_d;
+alpha_d =  0.0095;  
 
 yalmip('clear');
 W = sdpvar(n,n);  X = sdpvar(m,n);  kap = sdpvar(1,1);

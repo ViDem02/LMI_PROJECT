@@ -1,5 +1,5 @@
 function res = run_observer(lin, K, L, xhat0, cfg, t_sim, dt)
-
+% simulation of observer with the non-linear plant
 
 A = lin.A;  B = lin.B;  C = lin.C;
 xeq = lin.xeq(:);  ueq = lin.ueq(:);

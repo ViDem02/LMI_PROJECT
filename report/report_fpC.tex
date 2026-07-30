@@ -2,12 +2,6 @@
 %  Personal LaTeX Template
 %  Victor Gabriele De Matteis
 %
-%  Usage:
-%    1. Copy this file and rename it for your project.
-%    2. Fill in the title block below.
-%    3. Replace \bibliography{references} with your own .bib file.
-%    4. Compile: pdflatex -> bibtex -> pdflatex x2
-%
 %  Citation style: numeric [1], compact (abbrvnat).
 %  To switch to author-year, replace:
 %    \usepackage[numbers,square,sort&compress]{natbib}
@@ -104,6 +98,18 @@ itemsep=3pt
 
 \definecolor{accent}{RGB}{25,55,140}   % change this to restyle everything
 
+% --- tinted, rounded, fixed-padding panel behind figures (image + caption) ---
+%\definecolor{figbg}{RGB}{247,247,243}          % dirty white
+\colorlet{figbg}{accent!7!white}  % 7% accent, 93% white
+\usepackage[most]{tcolorbox}
+\newtcolorbox{figpanelenv}[1]{%  #1 = outer width
+  colback=figbg, colframe=figbg, boxrule=0pt,
+  arc=4pt,                                   % corner radius
+  boxsep=0pt, left=6pt, right=6pt, top=6pt, bottom=6pt,  % fixed padding
+  width=#1, halign=center,
+  before skip=0pt, after skip=0pt
+}
+
 % \emph produces upright accent-coloured text instead of italic.
 % Use \textit{} when you genuinely want italics.
 \renewcommand{\emph}[1]{\textit{#1}}
@@ -189,14 +195,14 @@ $$\delta x = x - \bar x, \qquad \delta u = u - \bar u, \qquad \delta\omega = \om
 therefore, every gain, estimate and response that follows is understood relative to this operating point. 
 Absolute quantities are recovered as  $x = \bar x + \delta x$ and $u = \bar u + \delta u$.
 
-\RuleSection{Modelling and Linearisation}
+\RuleSection{Modelling and Linearization}
 \label{sec:q1}
 
 \subsection{Operating point}
 
 The steady state conditions $\dot h_1 = \dot h_2=0$ provide two algebraic equations in five unknowns, so the admissible equilibria form a three-parameter family. The operating point therefore is a design choice rather than a property fixed by the plant. 
 
-We linearize about $\bar h_1 = \bar h_2 = 0.2$ m, the maximum admissible level and therefore the most demanding steady state the closed loop is required to hold. 
+We linearise about $\bar h_1 = \bar h_2 = 0.2$ m, the maximum admissible level and therefore the most demanding steady state the closed loop is required to hold. 
 Fixing the two levels leaves us with one parameter: $u_2$, upon which both $u_1$ and $u_3$ depend:
 
 \begin{equation}
@@ -208,9 +214,12 @@ Fixing the two levels leaves us with one parameter: $u_2$, upon which both $u_1$
 
 \begin{wrapfigure}{r}{6.4cm}
     \centering
-    \includegraphics[width=6cm]{figures/find_u2}
-    \caption{\small Actuator margins $\min(\bar u_i,\,1-\bar u_i)$ against the free parameter $u_2$, with $\bar u_1,\bar u_3$ set by the steady-state balance~\eqref{eq:q1_balance}. }
+    \begin{figpanelenv}{6.4cm}%
+%
+    \includegraphics[width=5.7cm]{figures/find_u2}
+    \captionof{figure}{\small Actuator margins $\min(\bar u_i,\,1-\bar u_i)$ against the free parameter $u_2$, with $\bar u_1,\bar u_3$ set by the steady-state balance~\eqref{eq:q1_balance}. }
     \label{fig:q1_margins}
+    \end{figpanelenv}
 \end{wrapfigure}
 
 We resolve this last freedom from the margin sweep of Figure \ref{fig:q1_margins}. Controller margins will become especially important in the next sections, where all inputs will be bounded also during the transient dynamics. The most balanced choice is considered to be the point where these curves cross, it's the best compromise among controller margins. This occurs at $u_2 \approx 0.32$, which we adopt. 
@@ -239,7 +248,7 @@ Collecting the two balances, the plant follows the following ODEs:
     \label{eq:q1_nl}
 \end{equation}
 
-with outflow velocity $\varphi_i \equiv \varphi(h_i) = \sqrt{2 \ g \ h_i}$. Writing $\bm f = [\dot h_1, \dot h_2]^\top$ as a function of $(\bm x, \bm u, \bm \omega)$, the linearized model is obtained from its Jacobians at the operating point, evaluated at our chosen equilibrium:
+with outflow velocity $\varphi_i \equiv \varphi(h_i) = \sqrt{2 \ g \ h_i}$. Writing $\bm f = [\dot h_1, \dot h_2]^\top$ as a function of $(\bm x, \bm u, \bm \omega)$, the linearised model is obtained from its Jacobians at the operating point, evaluated at our chosen equilibrium:
 
 \begin{equation}
     A=\left.\frac{\partial\bm{f}}{\partial\bm{x}}\right|_\star,\quad
@@ -316,17 +325,20 @@ Finally, the eigenvalue magnitude  corresponds to a dominant time constant of $1
 
 \subsection{Linear versus nonlinear response}
 
-Figure \ref{fig:q1_cmp} compares the linearized and nonlinear dynamics under the constant equilibrium input, from two initial conditions: a small deviation close to operating point and a large one, far from the operating point. Both models converge to the equilibrium, although for a large deviation the separation among the two trajectories is significant. 
+Figure \ref{fig:q1_cmp} compares the linearised and nonlinear dynamics under the constant equilibrium input, from two initial conditions: a small deviation close to operating point and a large one, far from the operating point. Both models converge to the equilibrium, although for a large deviation the separation among the two trajectories is significant. 
 
 
 \begin{figure}[tb]
     \centering
+    \begin{figpanelenv}{16.4cm}%
+%
     \includegraphics[width=16cm]{figures/q1_cmp}
-    \caption{Free response of the linearised and nonlinear 
+    \captionof{figure}{Free response of the linearised and nonlinear 
     models under the constant equilibrium input, for different initial deviations. Far from the operating point the
     nonlinear response fills faster, as the linearisation overestimates the
     $\sqrt{h}$ outflow.}
     \label{fig:q1_cmp}
+    \end{figpanelenv}
 \end{figure}
 
 
@@ -358,9 +370,11 @@ Figure~\ref{fig:q1_decomp} shows this decomposition: the net error $\dot h_2^{\t
 
 \begin{figure}[tb]
     \centering
+    \begin{figpanelenv}{\linewidth}%
+%
     \begin{subfigure}[t]{0.49\linewidth}
         \centering
-        \includegraphics[width=5cm]{figures/q1_decomp}
+        \includegraphics[width=4cm]{figures/q1_decomp}
         \caption{Error of $\dot h_2$ split into inflow ($+u_2a_2\varphi_1$)
         and outflow ($-u_3a_3\varphi_2$) channels.}
         \label{fig:q1_decomp}
@@ -368,16 +382,17 @@ Figure~\ref{fig:q1_decomp} shows this decomposition: the net error $\dot h_2^{\t
     \hfill
     \begin{subfigure}[t]{0.49\linewidth}
         \centering
-        \includegraphics[width=6cm]{figures/q1_err}
+        \includegraphics[width=5cm]{figures/q1_err}
         \caption{Norm of the mismatch
         $\|\bm{x}_{\mathrm{nl}}-\bm{x}_{\mathrm{lin}}\|$ for the two initial
         deviations (separate axes).}
         \label{fig:q1_err}
     \end{subfigure}
-    \caption{Linearisation error. Channel decomposition~(a) and overall
+    \captionof{figure}{Linearization error. Channel decomposition~(a) and overall
     norm~(b); the peak scales by roughly two orders of magnitude between the
     small and large deviations.}
     \label{fig:q1_error}
+    \end{figpanelenv}
 \end{figure}
 
 Figure \ref{fig:q1_err} quantifies the overall linearization error through $\| \bm x_{\text{nl}} - \bm x_{\text{lin}} \|$: the peak error goes from  $\approx2.5\times10^{-4}$~m for the small deviation to $\approx2\times 10^{-2}$~m for the large one -- roughly two orders of magnitude --
@@ -386,7 +401,7 @@ confirming that the linearization is accurate near $0.2$~m and degrades progress
 \RuleSection{State-Feedback Design via LMIs}
 \label{sec:q2}
 
-With the plant linearized, we design a static state feedback $\delta \bm u = K \ \delta \bm x$ that makes the fluid level go back to the operating point. When applied to the plant, the command is: $\bm u = \bm{\bar u} + K(\bm{x} - \bm{\bar x})$. The feed-forward term $\bm{\bar u}$ sustains the equilibrium while $ K(\bm{x} - \bm{\bar x}) $ supplies the correction. The three gains obtained below rest on a common construction which is presented in this first section.
+With the plant linearised, we design a static state feedback $\delta \bm u = K \ \delta \bm x$ that makes the fluid level go back to the operating point. When applied to the plant, the command is: $\bm u = \bm{\bar u} + K(\bm{x} - \bm{\bar x})$. The feed-forward term $\bm{\bar u}$ sustains the equilibrium while $ K(\bm{x} - \bm{\bar x}) $ supplies the correction. The three gains obtained below rest on a common construction which is presented in this first section.
 
 \subsection{From Lyapunov inequality to LMI}
 
@@ -403,7 +418,7 @@ is Hurwitz, equivalently if there exists $P=P^\top\succ0$ such that
 \end{equation}
 
 
-Condition \eqref{eq:q2_lyap} is non linear because of the product $PBK$. Following product $PBK$, and is therefore not a linear matrix inequality. Following \citep{zaccarian_lmi}, we can get to a linear LMI by the change of variables $W := P^{-1} \succ 0$: pre and post multiplying \eqref{eq:q2_lyap} by $W$ and setting $X := KW$ gives 
+Condition \eqref{eq:q2_lyap} is non linear because of the product $PBK$, and is therefore not a linear matrix inequality. Following \citep{zaccarian_lmi}, we can get to a linear LMI by the change of variables $W := P^{-1} \succ 0$: pre and post multiplying \eqref{eq:q2_lyap} by $W$ and setting $X := KW$ gives 
 
 
 \begin{equation}
@@ -425,13 +440,16 @@ Controllability guarantees that \ref{eq:q2_lyap} has at least one solution, so a
 \subsection{Arbitrary stabilizer}
 \begin{wrapfigure}{r}{6.4cm}
     \centering
-    \includegraphics[width=6cm]{figures/q2_control}
-    \caption{Control signals for the three designs. NB: differing vertical
+    \begin{figpanelenv}{6.4cm}%
+%
+    \includegraphics[width=5.7cm]{figures/q2_control}
+    \captionof{figure}{Control signals for the three designs. Note: differing vertical
     scales, $u_1$ on the left axis and $u_2,u_3$ on the right. Different 
-    time scales capture the transient. }
+    time scales capture the transient.}
     \label{fig:q2_control}
+    \end{figpanelenv}
 \end{wrapfigure}
-The fist design solves the aforementioned problem in the previous section, with no objective nor constraints. At there there's no further optimization, the solver returns any arbitrarily feasible point. The found gain is $K_a$, which is available in the accompanying code. 
+The first design solves the aforementioned problem in the previous section, with no objective nor constraints. At there there's no further optimization, the solver returns any arbitrarily feasible point. The found gain is $K_a$, which is available in the accompanying code. 
 
 The following gain places the closed-loop eigenvalues at $\lambda_{1,2}(A+BK_a)=-0.500$. Simulated on the nonlinear plant, this gain drives the commands far outside the admissible range, as reported in (Table \ref{tab:q2_cmp}).
 
@@ -469,7 +487,7 @@ A Schur complement on the last block gives $X^\top X \prec \kappa^2 \ I$, hence 
 \subsection{Comparison}
 
 Table \ref{tab:q2_cmp} has been produced in order to provide a quantitative evaluation of each gain's performance. 
-Additionally, Figures \ref{fig:q2_state_short} and \ref{fig:q2_state_long} show the behaviour of the system with and without state-feedback: the first figure highlights the overshoot, while the second shows settling times of the slower dynamics. Finally, Figure \ref{fig:q2_control} shows the control trajectories using the three different gains. The best performance is provided by the second controller which employs $K_b$, while the controller which could be implemented in reality is the third one, although, as will be shown in the next sections, it's not robust to sensor failure. Using the third controller allows to improve the open loop response by approximately seven times, while still respecting actuator feasibility. 
+Additionally, Figures \ref{fig:q2_state_short} and \ref{fig:q2_state_long} show the behaviour of the system with and without state-feedback: the first figure highlights the overshoot, while the second shows settling times of the slower dynamics. Finally, Figure \ref{fig:q2_control} shows the control trajectories using the three different gains. The best performance is provided by the second controller which employs $K_b$, while the controller which could be implemented in reality is the third one, although, as will be shown in the next sections, it's not robust to sensor failure. Using the third controller allows us to improve the open loop response by approximately seven times, while still respecting actuator feasibility. 
 
 \begin{table}[htbp]
     \centering
@@ -485,13 +503,15 @@ Additionally, Figures \ref{fig:q2_state_short} and \ref{fig:q2_state_long} show 
         $K_c$ (min-gain)     &  385 & 0.868 & \phantom{-}0.012  \\
         \bottomrule
     \end{tabular}
-    \caption{Closed-loop comparison on the nonlinear plant, from $\delta\bm{x}_0=-0.05$~m. Settling time $t_s$ is the time to enter and remain within $2\%$ of the initial step size; a $1.4$~s floor is applied to avoid the overshoot being mistaken with settling time. The commands of $K_a$ and $K_b$ leave the admissible range $[0,1]$, so their settling times are not physically realisable; only $K_c$ respects the actuator bounds.$u_{\text{max}}$ and $u_{\text{min}}$ are considered across all three controls. }
+    \caption{Closed-loop comparison on the nonlinear plant, from $\delta\bm{x}_0=-0.05$~m. Settling time $t_s$ is the time to enter and remain within $2\%$ of the initial step size; a $1.4$~s floor is applied to avoid the overshoot being mistaken for settling time. The commands of $K_a$ and $K_b$ leave the admissible range $[0,1]$, so their settling times are not physically realisable; only $K_c$ respects the actuator bounds. $u_{\text{max}}$ and $u_{\text{min}}$ are considered across all three controls. }
     \label{tab:q2_cmp}
 \end{table}
 
 
 \begin{figure}[tb]
     \centering
+    \begin{figpanelenv}{\linewidth}%
+%
     \begin{subfigure}[t]{6cm}
         \centering
         \includegraphics[height=7cm]{figures/q2_state_short}
@@ -508,11 +528,12 @@ Additionally, Figures \ref{fig:q2_state_short} and \ref{fig:q2_state_long} show 
         \label{fig:q2_state_long}
     \end{subfigure}
 
-    \caption{Closed-loop state response on the nonlinear plant from
+    \captionof{figure}{Closed-loop state response on the nonlinear plant from
     $\delta\bm{x}_0=-0.05$~m, shown at two timescales. The apparent
     instantaneous settling of $K_a$ and $K_b$ in~(b) is obtained only with
     the inadmissible commands of Figure~\ref{fig:q2_control}.}
     \label{fig:q2_state}
+    \end{figpanelenv}
 \end{figure}
 
 
@@ -528,7 +549,7 @@ The observability matrix has rank $2$ for $C_2$ and rank $1$ for $C_1$. This tel
 
 \subsection{Observer gain}
 
-The observer mirrors the model by working with a state estimate $\widehat{\delta \bm x}$. During its update, two component are summed together: the dynamics of the estimated state and a correction term, which depends on the difference among measured output and predicted output: 
+The observer mirrors the model by working with a state estimate $\widehat{\delta \bm x}$. During its update, two components are summed together: the dynamics of the estimated state and a correction term, which depends on the difference among measured output and predicted output: 
 
 \begin{equation}
     \mathsf{d/dt}\Big[\widehat{\delta\bm{x}}\Big]
@@ -539,9 +560,9 @@ The observer mirrors the model by working with a state estimate $\widehat{\delta
     \label{eq:q3_obs}
 \end{equation}
 
-The correction term is interesting at it is used as a proxy for the current "goodness" of our estimation. The matrix $L$ tells not only the sensibility that the result has on the state, it also tells the direction in which the estimate should be corrected. 
+The correction term is interesting as it is used as a proxy for the current "goodness" of our estimation. The matrix $L$ tells not only the sensitivity that the result has on the state, it also tells the direction in which the estimate should be corrected. 
 
-Moreover, the estimation error $\bm{e}=\delta\bm{x}-\widehat{\delta\bm{x}}$ follows $\dot{\bm{e}}=(A-LC)\bm{e}$, therefore, we want $A-LC$ to have stable eigenvalues with a chosen rate, in oder to have asymptotic stability towards zero. 
+Moreover, the estimation error $\bm{e}=\delta\bm{x}-\widehat{\delta\bm{x}}$ follows $\dot{\bm{e}}=(A-LC)\bm{e}$, therefore, we want $A-LC$ to have stable eigenvalues with a chosen rate, in order to have asymptotic stability towards zero. 
 
 This is the dual of the state-feedback problem, because the estimation-error matrix $A-LC$ has the same eigenvalues as its transpose $(A-LC)^\top = A^\top - C^\top L^\top$. Assigning those eigenvalues by the choice of $L$ is therefore the same task as choosing a state-feedback gain for the pair $(A^\top,C^\top)$, which was exactly the problem of Section~\ref{sec:q2} with $A\to A^\top$ and $B\to C^\top$. Therefore, we solve the dual LMI:
 \begin{equation}
@@ -556,10 +577,12 @@ With $\alpha_{\mathrm{obs}}=2$ the observer eigenvalues come out at $-3.254$ (bo
 
 The observer is tested on the nonlinear plant with a sensor failure on sensor $h_1$. The initial deviation coordinates are $\delta \bm x = [-0.05, -0.05]$: $h_2$ is initialized at the correct value while $h_1$ is initialized at the equilibrium value $h_1(0) := h_1^{\text{eq}} = 0.2$.
 
-Figure \ref{fig:q3_track} shows the result. The gain $\alpha_2$ dictates the kink in the trajectory at $t = 1.3s$: the trajectory then reaches within $1$ mm of true $h_1$ after $164.3$ s, as the tanks approach the operating point. The lag of the observer model is due to the fact that the observer is based on the linearized version of the model: if the observer is run on the linear state, the correction happens at $1.30$ s. 
+Figure \ref{fig:q3_track} shows the result. The gain $\alpha_obs = 2$ dictates the kink in the trajectory at $t = 1.3s$: the trajectory then reaches within $1$ mm of true $h_1$ after $164.3$ s, as the tanks approach the operating point. The lag of the observer model is due to the fact that the observer is based on the linearised version of the model: if the observer is run on the linear state, the correction happens at $1.30$ s. 
 
 \begin{figure}[tb]
     \centering
+    \begin{figpanelenv}{\linewidth}%
+%
     \begin{subfigure}[t]{0.49\linewidth}
         \centering
         \includegraphics[height=7cm]{figures/q3_track}
@@ -577,9 +600,10 @@ Figure \ref{fig:q3_track} shows the result. The gain $\alpha_2$ dictates the kin
         matches as the estimate becomes exact.}
         \label{fig:q3_fb}
     \end{subfigure}
-    \caption{Observer behaviour: state estimation~(a) and the resulting
+    \captionof{figure}{Observer behaviour: state estimation~(a) and the resulting
     observer-based closed loop~(b).}
     \label{fig:q3}
+    \end{figpanelenv}
 \end{figure}
 
 
@@ -592,7 +616,7 @@ With no $h_1$ sensor, the controller must use its estimate. By the separation pr
     \label{eq:q3_fb}
 \end{equation}
 
-Figure \ref{fig:q3_fb} compares the observer-based loop with the full-state loop of section \ref{sec:q2}. Both reach operating point, although the observer based response is faster on $h_1$. The reason follows from Figure \ref{fig:q3_track}: $h_1$ is underestimated, driving the controller to fill more aggressively the first tank. 
+Figure \ref{fig:q3_fb} compares the observer-based loop with the full-state loop of section \ref{sec:q2}. Both reach the  operating point, although the observer based response is faster on $h_1$. The reason follows from Figure \ref{fig:q3_track}: $h_1$ is underestimated, driving the controller to fill more aggressively the first tank. 
 
 Table \ref{tab:q3_cmp} makes the comparison precise: the observer-based loop settles faster on both tanks, although at the cost of actuators saturation. The smallest command drops to $-0.094$, which is outside of feasible range. A new gain $K_d$ is computed, in order to get a feasible gain compatible with the observation model distance from the real model. The manual tuning settles on $\alpha_d=0.0095$, a little below $\alpha_c$, which gives $K_d$. Its numeric value is available in the accompanying code. The associated eigenvalues are $\lambda_{1,2}=-0.0095$. 
 
@@ -622,6 +646,6 @@ response. Settling rises from $192$ to $255$~s on $h_1$ and from $367$ to $453$~
 
 % ====================================================================== 
 \bibliographystyle{abbrvnat}
-\bibliography{references}   % <- replace with your .bib filename (no extension)
+\bibliography{references}   
 
 \end{document}
