@@ -54,23 +54,23 @@ flowchart LR
 
 The Lyapunov condition for the closed loop $A+BK$ is **bilinear** in $(P, K)$, so it can't be handed to a solver as is. Substituting $W = P^{-1}$ and $X = KW$ makes it linear:
 
-$$
-\underbrace{\operatorname{He}\big(P(A+BK)\big) \prec 0}_{\text{nonconvex}}
+```math
+\underbrace{\mathrm{He}\big(P(A+BK)\big) \prec 0}_{\text{nonconvex}}
 \quad\Longrightarrow\quad
-\underbrace{W \succ 0,\;\; \operatorname{He}(AW + BX) \preceq -2\alpha W}_{\text{LMI in } (W,\,X)}
+\underbrace{W \succ 0,\;\; \mathrm{He}(AW + BX) \preceq -2\alpha W}_{\text{LMI in } (W,\,X)}
 \quad\Longrightarrow\quad
 K = XW^{-1}
-$$
+```
 
 To keep the actuators within bounds, `K_c` also minimizes a gain bound $\kappa$ via a Schur complement:
 
-$$
-\min_{W,X,\kappa}\; \kappa \quad \text{s.t.} \quad W \succ I,\quad \operatorname{He}(AW+BX)\preceq -2\alpha W,\quad
+```math
+\min_{W,X,\kappa}\; \kappa \quad \text{s.t.} \quad W \succ I,\quad \mathrm{He}(AW+BX)\preceq -2\alpha W,\quad
 \begin{bmatrix}\kappa I & X^\top \\ X & \kappa I\end{bmatrix} \succ 0
 \;\;\Rightarrow\;\; \|K\| \le \kappa
-$$
+```
 
-The observer is the same problem transposed: $(A,\,B) \to (A^\top,\,C^\top)$.
+The observer is the same problem transposed: $`(A,\,B) \to (A^\top,\,C^\top)`$.
 
 ---
 
@@ -109,10 +109,10 @@ The observer is the same problem transposed: $(A,\,B) \to (A^\top,\,C^\top)$.
 
 Because of the cascade, $A$ is lower-triangular, so **only the $h_2$ sensor matters**:
 
-| Failed sensor | Remaining $C$ | $\operatorname{rank}\,\mathcal{O}$ | Recoverable? |
+| Failed sensor | Remaining $C$ | $`\mathrm{rank}\,\mathcal{O}`$ | Recoverable? |
 |---|---|:-:|:-:|
-| $h_1$ | $[0\;\;1]$ | 2 | ✅ |
-| $h_2$ | $[1\;\;0]$ | 1 | ❌ |
+| $h_1$ | $`[0\;\;1]`$ | 2 | ✅ |
+| $h_2$ | $`[1\;\;0]`$ | 1 | ❌ |
 
 The observer poles sit at **−3.254**, roughly 280× faster than the controller poles at −0.0115. By the separation principle, the closed-loop spectrum is the union of the two sets.
 
